@@ -3,8 +3,12 @@ import xmltodict
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler
 from datetime import datetime, timezone
+import os 
+from dotenv import load_dotenv
 
-BOT_TOKEN = "8441828496:AAH9uAbFPJO5KWQukJja4EJSkvGNyGp31x8"
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 API_URL = "https://meridian.centrum-air.com/meridian-server/rest/named-queries/timetable?left=3&right=1"
 HEADERS = {"Authorization" : "Basic YXZ0cmElMTpuZkh0OTM4JmQ="}
@@ -13,12 +17,12 @@ TRANSLATIONS = {
     "en": {
         "start": "Hello! I can show you live Meridian flights.\n"
                  "Try commands:\n"
-                 "• <code>/flight 305</code>\n"
+                 "• /flight <i>305</i>\n"
                  "• /arrivals\n"
                  "• /departures\n\n"
                  "Change language: /lang uz | /lang ru | /lang en",
 
-        "usage_flight": "Usage: /flight 'race number'",
+        "usage_flight": "Usage: /flight <i>305</i>",
         "flight_not_found": "Flight {flight_no} not found.",
         "upcoming_arrivals": "Upcoming Arrivals to TAS",
         "upcoming_departures": "Upcoming Departures from TAS",
@@ -34,12 +38,12 @@ TRANSLATIONS = {
     "ru": {
         "start": "Привет! Я показываю рейсы Meridian в реальном времени.\n"
                  "Команды:\n"
-                 "• <code>/flight 305</code>\n"
+                 "• /flight <i>305</i>\n"
                  "• /arrivals\n"
                  "• /departures\n\n"
                  "Сменить язык: /lang uz | /lang ru | /lang en",
 
-        "usage_flight": "Использование: /flight 'номер рейса'",
+        "usage_flight": "Использование: /flight <i>305</i>",
         "flight_not_found": "Рейс {flight_no} не найден.",
         "upcoming_arrivals": "Прилёты в TAS",
         "upcoming_departures": "Вылеты из TAS",
@@ -55,12 +59,12 @@ TRANSLATIONS = {
     "uz": {
         "start": "Salom! Men Meridian reyslarini real vaqtda ko‘rsata olaman.\n"
                  "Buyruqlar:\n"
-                 "• <code>/flight 305</code>  \n"
+                 "• /flight <i>305</i>\n"
                  "• /arrivals\n"
                  "• /departures\n\n"
                  "Tilni o‘zgartirish: /lang uz | /lang ru | /lang en",
 
-        "usage_flight": "Foydalanish: /flight 'race raqami'",
+        "usage_flight": "Foydalanish: /flight <i>305</i>",
         "flight_not_found": "Parvoz {flight_no} topilmadi.",
         "upcoming_arrivals": "TAS ga keladigan reyslar",
         "upcoming_departures": "TAS dan uchadigan reyslar",
@@ -135,7 +139,7 @@ def find_flight_by_number(flights, flight_no):
 
 async def flight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
-        await update.message.reply_text(t(context.user_data, "usage_flight"))
+        await update.message.reply_text(t(context.user_data, "usage_flight"), parse_mode="HTML")
         return
     
     flight_no = context.args[0]
